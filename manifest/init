@@ -1,0 +1,10 @@
+#!/bin/sh -eu
+# Global init manifest for cdist
+
+config_files=$(cat ${__files}/config_files | tr '\n' ' ')
+echo "[manifest/init] config_files=\"${config_files}\"" >&2
+
+__dotfiles /home/jay/.dotfiles \
+    --github_repo https://github.com/jbromley/dotfiles.git \
+    --user jay \
+    --config_files "${config_files}"

@@ -1,0 +1,21 @@
+#!/bin/sh -e
+# vim: ft=sh:
+
+username="$__object_id"
+githubusername="$username"
+if [ -f "$__object/parameter/githubusername" ]; then
+    githubusername="$(cat $__object/parameter/githubusername)"
+fi
+if [ -f "$__object/parameter/state" ]; then
+    state="$(cat $__object/parameter/state)"
+else
+    state="present"
+fi
+
+mkdir -p $__object/files
+curl -s https://github.com/${githubusername}.keys >> "$__object/files/keys"
+
+echo __ssh_authorized_keys ${username} --state ${state} ${keys} \\ > "$__object/files/cmd"
+sed "$__object/files/keys" -e 's/^/--key \"/' -e 's/$/\" \\/' >> "$__object/files/cmd"
+echo >>"$__object/files/cmd"
+. "$__object/files/cmd"

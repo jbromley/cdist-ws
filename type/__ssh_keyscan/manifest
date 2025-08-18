@@ -1,0 +1,4 @@
+#!/bin/sh -e
+# vim: set ft=sh:
+
+__ssh_dot_ssh $__object_id

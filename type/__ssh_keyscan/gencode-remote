@@ -1,0 +1,43 @@
+#!/bin/sh -e
+#
+# 2023 russel (russel@appliedinvention.com)
+#
+# This file is part of cdist.
+#
+# cdist is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# cdist is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with cdist. If not, see <http://www.gnu.org/licenses/>.
+#
+
+if [ "$__object_id" = "root" ]; then
+    KNOWN_HOSTS_PATH=/root/.ssh/known_hosts
+else
+    KNOWN_HOSTS_PATH=/home/$__object_id/.ssh/known_hosts
+fi
+
+hosts=$(cat $__object/parameter/hosts)
+
+cat <<EOF
+GATHERED_KEYS=\$(mktemp keyscan-gather.XXXXXXXXX)
+ssh-keyscan -H ${hosts} >\${GATHERED_KEYS} 2>/dev/null
+MISSING_KEYS=\$(mktemp keyscan-missing.XXXXXXXXX)
+while read keyline; do
+    key=\$(echo "\${keyline}" | cut -d" " -f3)
+    if ! grep -q "\${key}" ${KNOWN_HOSTS_PATH}; then
+        echo "\${keyline}" >>\${MISSING_KEYS}
+    fi
+done <\${GATHERED_KEYS}
+cat \${MISSING_KEYS} >>${KNOWN_HOSTS_PATH}
+rm \${GATHERED_KEYS} \${MISSING_KEYS}
+chmod 600 ${KNOWN_HOSTS_PATH}
+chown $__object_id:$__object_id ${KNOWN_HOSTS_PATH}
+EOF

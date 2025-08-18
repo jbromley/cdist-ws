@@ -1,0 +1,34 @@
+# vim: set ft=sh:
+
+username=$__object_id
+
+state=$(cat $__object/parameter/state)
+
+if [ -f "$__object/parameter/githubusername" ]; then
+    githubusername="--githubusername $(cat $__object/parameter/githubusername)"
+fi
+
+if [ -f "$__object/parameter/password" ]; then
+    password="--password $(cat $__object/parameter/password)"
+    sudo="--group sudo"
+fi
+
+__user $username --create-home --remove-home \
+    --state ${state} \
+    --shell /bin/bash \
+    ${password}
+
+require="__user/$username" __user_groups $username \
+    --state ${state} \
+    ${sudo} \
+    --group plugdev \
+    --group users \
+    --group admin \
+    --group docker \
+    --group dialout \
+    --group i2c
+
+
+if [ "${state}" -eq "present"] && [ -f "$__object/parameter/githubusername" ]; then
+    require="__user/$username" __github_ssh_keys ${username} ${githubusername} --state ${state}
+fi

@@ -1,0 +1,39 @@
+#!/bin/sh -e
+#
+# 2025 J. Bromley (jbromley@gmail.com)
+#
+# This file is part of cdist.
+#
+# cdist is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# cdist is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with cdist. If not, see <http://www.gnu.org/licenses/>.
+#
+TARGET_DIR="/${__object_id}"
+
+if [ -f "$__object/parameter/config_files" ]; then
+    CONFIG_FILES="$(cat "$__object/parameter/config_files")"
+else
+    CONFIG_FILES="zshrc zshenv aliases config/helix"
+fi
+CONFIG_LIST="$(echo "${CONFIG_FILES}" | tr ' ' '\n')"
+
+echo "cd ${TARGET_DIR}"
+echo 'echo "[__dotfiles] In $PWD" >&2'
+
+while read -r config_file; do
+    # if ! grep -qx "\$config_file" "$__global/explorer/__dotfiles/linked_files"; then
+    echo "echo \"[__dotfiles] linking ${config_file}\" >&2"
+    echo "su - ${USER} -c \"rcup ${config_file}\""
+    # fi
+done <<EOF
+${CONFIG_LIST}
+EOF

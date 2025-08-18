@@ -1,0 +1,19 @@
+#!/bin/sh -eu
+# Outputs "yes" if the repo appears cloned at the target, else "no".
+
+REPO="$(cat "$__object/parameter/github_repo" 2>/dev/null || true)"
+TARGET_REL="$(cat "$__object/parameter/target_directory" 2>/dev/null || true)"
+
+if [ -z "${TARGET_REL:-}" ]; then
+    echo no
+    exit 0
+fi
+
+TARGET="$HOME/$TARGET_REL"
+
+if [ -d "$TARGET/.git" ]; then
+    echo yes
+else
+    echo no
+fi
+

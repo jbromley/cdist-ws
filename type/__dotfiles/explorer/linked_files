@@ -1,0 +1,31 @@
+#!/bin/sh -eu
+# Outputs "all", "partial", or "none" based on presence of symlinked dotfiles in $HOME.
+
+# Determine the list of config files: parameter or built-in default.
+if [ -f "$__object/parameter/config_files" ]; then
+    CONFIG_FILES="$(tr '\n' ' ' < "$__object/parameter/config_files" | sed 's/[[:space:]]\{1,\}/ /g' | sed 's/^ *//;s/ *$//')"
+else
+    CONFIG_FILES=".aliases .zshrc .zshenv .rcrc"
+fi
+
+if [ -z "$CONFIG_FILES" ]; then
+    echo none
+    exit 0
+fi
+
+total=0
+linked=0
+for f in $CONFIG_FILES; do
+    total=$((total+1))
+    if [ -L "$HOME/.$f" ]; then
+        linked=$((linked+1))
+    fi
+done
+
+if [ "$linked" -eq 0 ]; then
+    echo none
+elif [ "$linked" -eq "$total" ]; then
+    echo all
+else
+    echo partial
+fi
