@@ -8,3 +8,7 @@ __dotfiles /home/jay/.dotfiles \
     --github_repo https://github.com/jbromley/dotfiles.git \
     --user jay \
     --config_files "${config_files}"
+
+__cli_apps
+
+__cdistmarker
