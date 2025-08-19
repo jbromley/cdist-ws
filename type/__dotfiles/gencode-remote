@@ -17,23 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with cdist. If not, see <http://www.gnu.org/licenses/>.
 #
-TARGET_DIR="/${__object_id}"
+target_dir="/${__object_id}"
+user=$(cat "$__object/parameter/user")
 
 if [ -f "$__object/parameter/config_files" ]; then
-    CONFIG_FILES="$(cat "$__object/parameter/config_files")"
+    config_files="$(cat "$__object/parameter/config_files")"
 else
-    CONFIG_FILES="zshrc zshenv aliases config/helix"
+    config_files="zshrc zshenv aliases config/helix"
 fi
-CONFIG_LIST="$(echo "${CONFIG_FILES}" | tr ' ' '\n')"
+config_list="$(echo "${config_files}" | tr ' ' '\n')"
 
-echo "cd ${TARGET_DIR}"
-echo 'echo "[__dotfiles] In $PWD" >&2'
+echo "cd ${target_dir}"
 
 while read -r config_file; do
     # if ! grep -qx "\$config_file" "$__global/explorer/__dotfiles/linked_files"; then
-    echo "echo \"[__dotfiles] linking ${config_file}\" >&2"
-    echo "su - ${USER} -c \"rcup ${config_file}\""
+    echo "su - ${user} -c \"rcup ${config_file}\""
     # fi
 done <<EOF
-${CONFIG_LIST}
+${config_list}
 EOF
