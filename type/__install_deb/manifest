@@ -33,8 +33,6 @@ case "$os" in
    ;;
 esac
 
-echo "[__install_deb] installing $__files/${__object_id}" >&2
-
 __package_dpkg ${__object_id} \
     --source "$__files/${__object_id}" \
     --state present
