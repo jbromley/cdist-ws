@@ -1,0 +1,35 @@
+#!/bin/sh -e
+#
+# 2025 J. Bromley (jbromley@gmail.com)
+#
+# This file is part of cdist.
+#
+# cdist is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# cdist is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with cdist. If not, see <http://www.gnu.org/licenses/>.
+#
+
+user="$__object_id"
+kitty_dir="/home/${user}/.local/kitty.app"
+desktop_dir="/home/${user}/.local/share/applications"
+terminfo_dir="/home/${user}/.terminfo/x"
+
+cat <<EOF
+su - ${user} -c "sh /tmp/kitty-installer.sh launch=n > /dev/null 2>&1"
+su - ${user} -c "ln -sf ${kitty_dir}/bin/kitty ${kitty_dir}/bin/kitten /home/${user}/.local/bin/"
+su - ${user} -c "cp ${kitty_dir}/share/applications/kitty.desktop ${desktop_dir}/"
+
+su - ${user} -c "sed -i \"s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g\" ${desktop_dir}/kitty*.desktop"
+su - ${user} -c "sed -i \"s|Exec=kitty|Exec=$(readlink -f ~)/.local/kitty.app/bin/kitty|g\" ${desktop_dir}/kitty*.desktop"
+su - ${user} -c "echo 'kitty.desktop' > /home/${user}/.config/xdg-terminals.list"
+su - ${user} -c "cp ${kitty_dir}/share/terminfo/x/xterm-kitty ${terminfo_dir}/"
+EOF

@@ -32,20 +32,24 @@ case "$os" in
 esac
 
 user="$__object_id"
+script_url="https://sw.kovidgoyal.net/kitty/installer.sh"
+desktop_dir="/home/${user}/.local/share/applications"
+terminfo_dir="/home/${user}/.terminfo/x"
 
-__install_deb bat_0.25.0_amd64.deb
-__install_deb zoxide_0.9.8-1_amd64.deb
-__install_deb helix_25.7.1-1_amd64.deb
+__directory "${desktop_dir}" \
+    --state present \
+    --parents \
+    --owner "${user}" \
+    --group "${user}"
 
-__install_archive starship \
-  --source starship-x86_64-unknown-linux-gnu.tar.gz \
-  --user "${user}"
-__install_archive lazygit \
-  --source lazygit_0.54.2_linux_x86_64.tar.gz \
-  --user "${user}"
-__install_archive fzf \
-  --source fzf-0.65.1-linux_amd64.tar.gz \
-  --user "${user}"
+__directory "${terminfo_dir}" \
+    --state present \
+    --parents \
+    --owner "${user}" \
+    --group "${user}"
 
-__install_yazi "${user}"
-__install_kitty "${user}"
+require="__directory/${desktop_dir} __directory/${terminfo_dir}" \
+__download /tmp/kitty-installer.sh \
+    --url "${script_url}" \
+    --onchange "chmod 644 /tmp/kitty-installer.sh"
+
