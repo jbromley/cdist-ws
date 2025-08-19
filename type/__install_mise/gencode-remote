@@ -1,0 +1,34 @@
+#!/bin/sh -e
+#
+# 2025 J. Bromley (jbromley@gmail.com)
+#
+# This file is part of cdist.
+#
+# cdist is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# cdist is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with cdist. If not, see <http://www.gnu.org/licenses/>.
+#
+
+user="$__object_id"
+runtimes=$(cat "$__object/parameter/runtimes")
+
+mise="/home/${user}/.local/bin/mise"
+
+cat <<EOF
+su - ${user} -c "
+MISE_QUIET=1 sh /tmp/mise-installer.sh
+for runtime in ${runtimes}; do
+  plugin='$(echo ${runtime} | sed \'s/@[0-9\.]//\')'
+  ${mise} --silent --yes plugin install '${plugin}'
+  ${mise} --silent --yes use --global '${runtime}'
+done"
+EOF
