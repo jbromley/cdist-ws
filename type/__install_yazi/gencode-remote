@@ -1,0 +1,37 @@
+#!/bin/sh -eu
+#
+# 2025 J. Bromley (jbromley@gmail.com)
+#
+# This file is part of cdist.
+#
+# cdist is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# cdist is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with cdist. If not, see <http://www.gnu.org/licenses/>.
+#
+user="$__object_id"
+
+cat <<EOF
+cp -f /tmp/yazi-x86_64-unknown-linux-gnu/ya /home/${user}/.local/bin
+cp -f /tmp/yazi-x86_64-unknown-linux-gnu/yazi /home/${user}/.local/bin
+cp -f /tmp/yazi-x86_64-unknown-linux-gnu/completions/_ya /home/${user}/.zsh
+cp -f /tmp/yazi-x86_64-unknown-linux-gnu/completions/_yazi /home/${user}/.zsh
+
+chown ${user}:${user} /home/${user}/.local/bin/ya
+chmod 755 /home/${user}/.local/bin/ya
+chown ${user}:${user} /home/${user}/.local/bin/yazi
+chmod 755 /home/${user}/.local/bin/yazi
+
+chown ${user}:${user} /home/${user}/.zsh/_ya
+chmod 644 /home/${user}/.zsh/_ya
+chown ${user}:${user} /home/${user}/.zsh/_yazi
+chmod 644 /home/${user}/.zsh/_yazi
+EOF

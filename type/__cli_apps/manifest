@@ -49,3 +49,4 @@ __install_archive fzf \
   --source fzf-0.65.1-linux_amd64.tar.gz \
   --user "${user}"
 
+__install_yazi "${user}"
