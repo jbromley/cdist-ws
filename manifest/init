@@ -9,6 +9,6 @@ __dotfiles /home/jay/.dotfiles \
     --user jay \
     --config_files "${config_files}"
 
-__cli_apps
+__cli_apps jay
 
 __cdistmarker
